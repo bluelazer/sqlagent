@@ -8,7 +8,7 @@ from langchain_community.agent_toolkits import SQLDatabaseToolkit
 
 import langchain
 #langchain.debug = True
-db_path = './sqlagent/titanic.db'
+db_path = 'titanic.db'
 #创建数据库连接
 db = SQLDatabase.from_uri(f'sqlite:///{db_path}')
 
@@ -228,16 +228,48 @@ agent_with_chat_history = RunnableWithMessageHistory(
     history_messages_key="chat_history",
     verbose=True,
 )
-
-
-
-while  True:
-    query = input("请输入查询语句：")
-    if query == "clear":
-        store.clear()
-        continue
-    if query == "exit":
-        break
+import gradio as gr
+# 定义聊天框的更新函数
+def chatbot_response(history,query):
+    # 获取机器人回复
     response = agent_with_chat_history.invoke({"input":query},config={"configurable": {"session_id": "<foo>"}})["output"]
-    print(response)
+    # 将用户消息和机器人的回复加入历史记录
+    history.append((query, response))
+    # 返回更新后的历史记录和一个空字符串来清空输入框
+    return history, gr.update(value="")
+
+
+
+if __name__ == "__main__":
+
+    # 定义 Gradio 界面
+    with gr.Blocks() as interface:
+        gr.Markdown("# 参数智能查询系统")
+        gr.Markdown("请输入问题，然后点击提交或按下回车。")
+        
+        chatbot = gr.Chatbot()  # 创建聊天框
+        msg_input = gr.Textbox(placeholder="输入问题...")  # 输入框
+        submit_btn = gr.Button("提交")  # 提交按钮
+
+        # 当用户点击按钮时，触发响应，并清空输入框
+        submit_btn.click(chatbot_response, [chatbot, msg_input], [chatbot, msg_input])
+        
+        # 当用户按下回车键时，触发相同的响应，并清空输入框
+        msg_input.submit(chatbot_response, [chatbot, msg_input], [chatbot, msg_input])
+
+    interface.launch()  # 启动 Gradio 界面
+
+
+
+
+
+# while  True:
+#     query = input("请输入查询语句：")
+#     if query == "clear":
+#         store.clear()
+#         continue
+#     if query == "exit":
+#         break
+#     response = agent_with_chat_history.invoke({"input":query},config={"configurable": {"session_id": "<foo>"}})["output"]
+#     print(response)
 
