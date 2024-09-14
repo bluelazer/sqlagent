@@ -80,7 +80,7 @@ prompt = PromptTemplate(
 
 
 agent = create_react_agent(llm, tools, prompt)
-agent_executor = AgentExecutor(agent=agent, tools=tools,verbose=True#handle_parsing_errors=True,
+agent_executor = AgentExecutor(agent=agent, tools=tools,verbose=True,handle_parsing_errors=True#handle_parsing_errors=True,
 #    verbose=True,
 )
 
@@ -120,7 +120,7 @@ if __name__ == "__main__":
 
     # 定义 Gradio 界面
     with gr.Blocks() as interface:
-        gr.Markdown("# 参数智能查询系统")
+        gr.Markdown("# SQL智能查询系统")
         gr.Markdown("请输入问题，然后点击提交或按下回车。")
         
         chatbot = gr.Chatbot()  # 创建聊天框
