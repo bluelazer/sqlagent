@@ -131,7 +131,7 @@ from langchain_community.agent_toolkits import SQLDatabaseToolkit
 
 import langchain
 #langchain.debug = True
-db_path = './sqlagent/titanic.db'
+db_path = 'titanic.db'
 #创建数据库连接
 db = SQLDatabase.from_uri(f'sqlite:///{db_path}')
 
